@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: '5.2.0'
+        classpath group: 'de.sebastianboegl.gradle.plugins', name: 'shadow-log4j-transformer', version: '2.1.1'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'maven'
+    id 'org.owasp.dependencycheck' version '5.3.1'
+//    id 'jacoco'
+}
+apply plugin: 'com.github.johnrengelman.shadow'
+
+sourceCompatibility = 14
+
+shadowJar {
+    manifest {
+        attributes 'Main-Class': 'ar.com.tinello.katas.virtualwallet.Main'
+    }
+}
+
+dependencies {
+    implementation project(':core')
+
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+    def log4jVersion = '2.13.3'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4jVersion
+
+    def vertxVersion = "3.9.3"
+    implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion
+
+    implementation group: 'io.vertx', name: 'vertx-web', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion
+    implementation group: 'io.swagger.parser.v3', name: 'swagger-parser-v3', version: '2.0.21'
+    
+    //implementation group: 'io.vertx', name: 'vertx-sql-common', version: vertxVersion
+    
+    //implementation group: 'io.vertx', name: 'vertx-jdbc-client', version: vertxVersion
+    //implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.4.2'
+    
+    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.7'
+
+    testImplementation project(path: ':core', configuration: 'testClasses')
+    testImplementation group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion
+    testImplementation group: 'io.vertx', name: 'vertx-web-client', version: vertxVersion
+}
+
+processResources {
+    exclude('conf.properties')
+}
